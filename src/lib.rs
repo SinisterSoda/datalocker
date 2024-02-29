@@ -1,5 +1,5 @@
-mod lockers;
-mod common;
+pub mod lockers;
+pub mod common;
 
 use common::traits::{FromLockerRow, QueryData};
 use lockers::mysql_locker::MysqlConnection;
