@@ -13,4 +13,4 @@ description = "My first Rust crate I made to learn. Basic Database Interface. Cu
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-mysql = "*"
+mysql = "24.0.0"
