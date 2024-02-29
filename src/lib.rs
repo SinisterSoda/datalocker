@@ -1,9 +1,11 @@
 pub mod lockers;
 pub mod common;
+pub extern crate mysql;
 
 use common::traits::{FromLockerRow, QueryData};
 use lockers::mysql_locker::MysqlConnection;
 use mysql::from_row;
+
 
 
 pub fn add(left: usize, right: usize) -> usize {
