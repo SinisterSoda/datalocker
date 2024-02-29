@@ -9,7 +9,7 @@ pub trait BuildsQueries {
     fn create(&self, table: &str, fields: &[(&str, &str)]) -> String;
     fn insert<T: QueryData>(&self, table: &str, data: &[T])  -> String;
     fn select_raw(&self, table: &str, cols: &str, where_clause: Option<&str>, order_by: Option<&str>, limit: Option<&str>) -> String;
-    fn select(&self, selectObj: &SelectBuilder) -> String;
+    fn select(&self, select_obj: &SelectBuilder) -> String;
 
     fn apply_macros(&self, string: &str, t: MacroType) -> String;
 }

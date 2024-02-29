@@ -21,6 +21,10 @@ impl<T: BuildsQueries> QueryBuilder<T> {
         }
     }
 
+    pub fn get_type(self) -> DB {
+        self.db
+    }
+
     pub fn create(&mut self, table: &str, fields: &[(&str, &str)]) -> String {
         self._builder.create(table, fields)
     }
@@ -33,8 +37,8 @@ impl<T: BuildsQueries> QueryBuilder<T> {
         self._builder.select_raw(table, cols, where_clause, order_by, limit)
     }
 
-    pub fn select(&self, selectObj: &SelectBuilder) -> String{
-        self._builder.select(selectObj)
+    pub fn select(&self, select_obj: &SelectBuilder) -> String{
+        self._builder.select(select_obj)
     }
 
 

@@ -20,7 +20,7 @@ impl BuildsQueries for MySqlBuilder {
         while let Some(field) = it.next() {
             let sq = format!("{} {}", field.0, self.apply_macros(field.1, MacroType::Create));
             q += &sq;
-            if (!it.peek().is_none()) {
+            if !it.peek().is_none() {
                 q += &", ";
             }
             else {
@@ -30,7 +30,7 @@ impl BuildsQueries for MySqlBuilder {
 
 
 
-        return String::from(q);
+        String::from(q)
     }
 
     fn new() -> Self {
@@ -80,7 +80,7 @@ impl BuildsQueries for MySqlBuilder {
 
     fn insert<T: QueryData>(&self, table: &str,  data: &[T]) -> String {
         let mut q: String = format!("INSERT INTO {table} ");
-        if (data.len() > 0){
+        if data.len() > 0{
             let cols = &data[0].to_column_array();
             let joined = cols.join(", ");
             q += format!("({}) VALUES ", joined).as_str();
@@ -98,8 +98,8 @@ impl BuildsQueries for MySqlBuilder {
         q
     }
 
-    fn select(&self, selectObj: &SelectBuilder) -> String{
-        selectObj.build()
+    fn select(&self, select_obj: &SelectBuilder) -> String{
+        select_obj.build()
     }
 
     fn select_raw(&self, table: &str, cols: &str, where_clause: Option<&str>, order_by: Option<&str>, limit: Option<&str>) -> String {

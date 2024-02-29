@@ -25,7 +25,7 @@ impl SelectBuilder {
     pub fn add_where(self, clause: &str) -> Self {
         let mut s = self;
         s.where_clauses.push(clause.to_string());
-        return s;
+        s
     }
 
     pub fn add_where_subquery(self, clause: &str, sb: SelectBuilder) -> Self {
@@ -34,8 +34,7 @@ impl SelectBuilder {
         let clause = format!("{} ({})", clause, sb.build());
 
         s.where_clauses.push(clause);
-
-        return s;
+        s
     }
 
     pub fn and(self) -> Self {
@@ -48,7 +47,7 @@ impl SelectBuilder {
     pub fn set_limit(self, l1: u32, l2: Option<u32>) -> Self {
         let mut s = self;
         s.limit = Some((l1, l2));
-        return s;
+        s
     }
 
     pub fn set_order_by(self, ob1: &str, ob2: Option<&str>) -> Self {
@@ -59,7 +58,7 @@ impl SelectBuilder {
         };
         s.order_by = Some((ob1.to_string(), ob_dir.to_string()));
 
-        return s;
+        s
     }
 
     pub fn build(&self) -> String {
@@ -67,7 +66,7 @@ impl SelectBuilder {
         let part1 = format!("SELECT {} FROM {}", self.columns.join(", "), self.table);
 
         let mut wheres: String = String::from("");
-        if (self.where_clauses.len() > 0){
+        if self.where_clauses.len() > 0{
             wheres = format!(" WHERE {}", self.where_clauses.join(" "))
         }
         let temp_ob = &self.order_by;

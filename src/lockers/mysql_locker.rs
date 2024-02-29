@@ -1,7 +1,7 @@
 
 
 use crate::common::enums::{MysqlAuthType, DB};
-use crate::common::traits::{BuildsQueries, QueryData};
+use crate::common::traits::QueryData;
 use crate::lockers::builders::mysql::MySqlBuilder;
 use mysql::*;
 use mysql::prelude::*;
@@ -136,8 +136,8 @@ impl MysqlConnection {
         Ok(rows.unwrap())
     }
 
-    pub fn select(&mut self, selectObj: &SelectBuilder) -> std::result::Result<Vec<mysql::Row>, Box<dyn std::error::Error>> {
-        let q = self.builder.select(selectObj);
+    pub fn select(&mut self, select_obj: &SelectBuilder) -> std::result::Result<Vec<mysql::Row>, Box<dyn std::error::Error>> {
+        let q = self.builder.select(select_obj);
         let rows: std::result::Result<Vec<mysql::Row>, Box<dyn std::error::Error>>= self.exec(&q);
         Ok(rows.unwrap())
     }

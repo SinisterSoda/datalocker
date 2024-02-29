@@ -4,14 +4,13 @@ mod common;
 use common::traits::{FromLockerRow, QueryData};
 use lockers::mysql_locker::MysqlConnection;
 use mysql::from_row;
-use std::result::Result;
-use std::error::Error;
+
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
 pub fn connect() -> MysqlConnection {
-    let mut conn: MysqlConnection = MysqlConnection::new(
+    let conn: MysqlConnection = MysqlConnection::new(
         "root".to_string(), 
         "rootroot".to_string(), 
         "localhost".to_string(), 
@@ -19,7 +18,7 @@ pub fn connect() -> MysqlConnection {
         "rust_example".to_string()
     );
 
-    return conn;
+    conn
     
 
 }
@@ -27,18 +26,18 @@ pub fn connect() -> MysqlConnection {
 
 pub struct TestDataStruct {
     id: Option<u32>,
-    Name: String,
-    Address: String,
-    Age: u8
+    name: String,
+    address: String,
+    age: u8
 }
 
 impl Default for TestDataStruct {
     fn default() -> TestDataStruct {
         TestDataStruct {
             id: None,
-            Name: String::from(""),
-            Address: String::from(""),
-            Age: 0
+            name: String::from(""),
+            address: String::from(""),
+            age: 0
         }
     }
 }
@@ -46,8 +45,8 @@ impl Default for TestDataStruct {
 impl ToString for TestDataStruct {
     fn to_string(&self) -> String {
         match self.id {
-            Some(id) => format!("{} {} {} {}", id, self.Name, self.Address, self.Age),
-            None => format!("{} {} {}", self.Name, self.Address, self.Age)
+            Some(id) => format!("{} {} {} {}", id, self.name, self.address, self.age),
+            None => format!("{} {} {}", self.name, self.address, self.age)
         }
 
     }
@@ -55,7 +54,7 @@ impl ToString for TestDataStruct {
 
 impl QueryData for TestDataStruct {
     fn to_query_string(&self) -> String {
-        format!("'{}', '{}', {}", self.Name, self.Address, self.Age)
+        format!("'{}', '{}', {}", self.name, self.address, self.age)
     }
     fn to_column_array(&self) -> &[&str] {
         &["Name", "Address", "Age"]
@@ -67,15 +66,17 @@ impl FromLockerRow for TestDataStruct {
         let (id, name, address, age) = from_row::<(u32, String, String, u8)>(row);
         Self {
             id: Some(id),
-            Name: name,
-            Address: address,
-            Age: age
+            name,
+            address,
+            age
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
+
+    use std::error::Error;
 
     use crate::lockers::builders::select::SelectBuilder;
 
@@ -105,9 +106,9 @@ mod tests {
         assert_eq!(r3.is_ok(), true);
         
         let data = [
-            TestDataStruct{ Name: String::from("Michael"), Address: String::from("158 Crystal Avenue"), Age: 25, ..Default::default() },
-            TestDataStruct{ Name: String::from("John"), Address: String::from("742 St. Lawrence Avenue"), Age: 28, ..Default::default() },
-            TestDataStruct{ Name: String::from("William"), Address: String::from("415 Atkins Street"), Age: 55, ..Default::default() }
+            TestDataStruct{ name: String::from("Michael"), address: String::from("158 Crystal Avenue"), age: 25, ..Default::default() },
+            TestDataStruct{ name: String::from("John"), address: String::from("742 St. Lawrence Avenue"), age: 28, ..Default::default() },
+            TestDataStruct{ name: String::from("William"), address: String::from("415 Atkins Street"), age: 55, ..Default::default() }
         ];
 
         let r4 = conn.insert("testTable", &data);
@@ -125,7 +126,7 @@ mod tests {
             println!("{} {} {} {}", id, name, address, age);
         }
 
-        let mut selector = SelectBuilder::new("testTable", &["*".to_string()])
+        let selector = SelectBuilder::new("testTable", &["*".to_string()])
             .add_where("Name = 'Michael'")
             .or()
             .add_where("Age = 28");
@@ -141,11 +142,11 @@ mod tests {
             
             println!("{} {} {} {}", id, name, address, age);
         }
-        let mut subselcetor = SelectBuilder::new("testTable", &["id".to_string()])
+        let subselcetor = SelectBuilder::new("testTable", &["id".to_string()])
             .add_where("id = 3")
             .or()
             .add_where("id = 2");
-        let mut selector2 = SelectBuilder::new("testTable", &["Name, Address".to_string()])
+        let selector2 = SelectBuilder::new("testTable", &["Name, Address".to_string()])
             .add_where_subquery("id in", subselcetor)
             .set_order_by("Name", None)
             .set_limit(1, None);
