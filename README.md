@@ -1,0 +1,1 @@
+Basic Database Interface. Currently works with mySQL only. Uses the mysql crate and provides a wrapper around it to make interacting with a mysql database easier.

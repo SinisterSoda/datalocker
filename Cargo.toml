@@ -2,6 +2,10 @@
 name = "datalocker"
 version = "0.1.0"
 edition = "2021"
+authors = ["Michael <mikethecoder4@gmail.com>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/SinisterSoda/datalocker"
+homepage = "https://github.com/SinisterSoda/datalocker"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
