@@ -8,6 +8,7 @@ repository = "https://github.com/SinisterSoda/datalocker"
 homepage = "https://github.com/SinisterSoda/datalocker"
 keywords = ["database", "mysql", "sql"]
 categories = ["database"]
+description = "My first Rust crate I made to learn. Basic Database Interface. Currently works with mySQL only. Uses the mysql crate and provides a wrapper around it to make interacting with a mysql database easier."
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
