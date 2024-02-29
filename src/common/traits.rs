@@ -2,7 +2,6 @@ use mysql::Row;
 
 use crate::lockers::builders::select::SelectBuilder;
 
-use super::enums::MacroType;
 
 pub trait BuildsQueries {
     fn new() -> Self;
@@ -10,8 +9,6 @@ pub trait BuildsQueries {
     fn insert<T: QueryData>(&self, table: &str, data: &[T])  -> String;
     fn select_raw(&self, table: &str, cols: &str, where_clause: Option<&str>, order_by: Option<&str>, limit: Option<&str>) -> String;
     fn select(&self, select_obj: &SelectBuilder) -> String;
-
-    fn apply_macros(&self, string: &str, t: MacroType) -> String;
 }
 
 pub trait QueryData {

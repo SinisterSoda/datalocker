@@ -1,6 +1,5 @@
 
 use crate::common::traits::{BuildsQueries, QueryData};
-use crate::common::enums::MacroType;
 
 use super::select::SelectBuilder;
 
@@ -18,7 +17,7 @@ impl BuildsQueries for MySqlBuilder {
 
         let mut it = fields.iter().peekable();
         while let Some(field) = it.next() {
-            let sq = format!("{} {}", field.0, self.apply_macros(field.1, MacroType::Create));
+            let sq = format!("{} {}", field.0, field.1);
             q += &sq;
             if !it.peek().is_none() {
                 q += &", ";
@@ -45,37 +44,6 @@ impl BuildsQueries for MySqlBuilder {
 
             ]
         }
-    }
-
-    fn apply_macros(&self, string: &str, t: MacroType) -> String {
-        //let s = self._macro_primary_key(&string);
-        let newstring = match t {
-            MacroType::Create => {
-                let mut s = string.to_string();
-                for m in self._macro_list_create {
-                    s = s.replace(m.0, m.1)
-                }
-                s
-            }
-            MacroType::Insert =>{
-                let mut s = string.to_string();
-                for m in self._macro_list_insert {
-                    s = s.replace(m.0, m.1)
-                }
-                s
-            }
-            MacroType::Select => {
-                let mut s = string.to_string();
-                for m in self._macro_list_select {
-                    s = s.replace(m.0, m.1)
-                }
-                s
-            }
-        };
-        
-
-
-        newstring.to_string()
     }
 
     fn insert<T: QueryData>(&self, table: &str,  data: &[T]) -> String {

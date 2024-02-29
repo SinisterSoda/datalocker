@@ -84,8 +84,6 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
         let mut conn = connect();
         let r2: Result<(), Box<dyn Error>> = conn.connect();
         //println!(r2.to_string());
@@ -97,7 +95,7 @@ mod tests {
 
         let r3 = conn.create("testTable", 
                                         &[
-                                            ("id", "<primary id>"),
+                                            ("id", query_primary_key!()),
                                             ("Name", "varchar(255)"),
                                             ("Address", "varchar(255)"),
                                             ("Age", "tinyint UNSIGNED")

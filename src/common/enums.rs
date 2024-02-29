@@ -17,11 +17,5 @@ pub enum DB {
 
 }
 
-pub enum MacroType {
-    Create,
-    Select,
-    Insert
-}
-
 
 
