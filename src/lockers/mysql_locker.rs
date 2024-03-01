@@ -6,8 +6,7 @@ use crate::lockers::builders::mysql::MySqlBuilder;
 use mysql::*;
 use mysql::prelude::*;
 
-use super::builders::delete::DeleteBuilder;
-use super::builders::select::SelectBuilder;
+use super::builders::clause::{ClauseBuilder, SelectBuilder};
 use super::query_builder::QueryBuilder;
 
 
@@ -148,7 +147,7 @@ impl MysqlConnection {
         self.query(&q)
     }
 
-    pub fn delete(&mut self, select_obj: &DeleteBuilder) -> std::result::Result<(), Box<dyn std::error::Error>> {
+    pub fn delete(&mut self, select_obj: &ClauseBuilder) -> std::result::Result<(), Box<dyn std::error::Error>> {
         let q = self.builder.delete(select_obj);
         
         self.query(&q)

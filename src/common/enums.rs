@@ -17,5 +17,11 @@ pub enum DB {
 
 }
 
+pub enum ClauseType {
+    Select,
+    Update,
+    Delete
+}
+
 
 

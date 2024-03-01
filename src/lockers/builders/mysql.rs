@@ -1,7 +1,6 @@
 
-use crate::common::traits::{BuildsQueries, QueryData};
+use crate::common::traits::{BuildsClauses, BuildsQueries, QueryData};
 
-use super::{delete::DeleteBuilder, select::SelectBuilder};
 
 
 
@@ -66,7 +65,7 @@ impl BuildsQueries for MySqlBuilder {
         q
     }
 
-    fn select(&self, select_obj: &SelectBuilder) -> String{
+    fn select<T: BuildsClauses>(&self, select_obj: &T) -> String{
         select_obj.build()
     }
 
@@ -102,7 +101,7 @@ impl BuildsQueries for MySqlBuilder {
 
         q
     }
-    fn delete(&self, select_obj: &DeleteBuilder) -> String{
+    fn delete<T: BuildsClauses>(&self, select_obj: &T) -> String{
         select_obj.build()
     }
 

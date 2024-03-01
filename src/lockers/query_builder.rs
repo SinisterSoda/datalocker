@@ -1,8 +1,7 @@
 use crate::common::enums::DB;
 use crate::common::traits::{BuildsQueries, QueryData};
 
-use super::builders::delete::DeleteBuilder;
-use super::builders::select::SelectBuilder;
+use super::builders::clause::{ClauseBuilder, SelectBuilder};
 
 
 
@@ -46,7 +45,7 @@ impl<T: BuildsQueries> QueryBuilder<T> {
         self._builder.delete_raw(table, where_clause)
     }
 
-    pub fn delete(&self, select_obj: &DeleteBuilder) -> String{
+    pub fn delete(&self, select_obj: &ClauseBuilder) -> String{
         self._builder.delete(select_obj)
     }
 

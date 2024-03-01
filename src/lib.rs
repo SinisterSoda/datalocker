@@ -65,7 +65,7 @@ mod tests {
 
     use std::error::Error;
 
-    use crate::lockers::builders::{delete::DeleteBuilder, select::SelectBuilder};
+    use crate::{common::{enums::ClauseType, traits::BuildsClauses}, lockers::builders::clause::{ClauseBuilder, SelectBuilder}};
     use lockers::mysql_locker::MysqlConnection;
 
     use super::*;
@@ -161,7 +161,7 @@ mod tests {
             println!("{} {}", name, address);
         }
 
-        let deletor = DeleteBuilder::new("testTable")
+        let deletor = ClauseBuilder::new("testTable", ClauseType::Delete)
             .add_where("id = 1");
 
         let r9 = conn.delete(&deletor);
