@@ -1,6 +1,7 @@
 use crate::common::enums::DB;
 use crate::common::traits::{BuildsQueries, QueryData};
 
+use super::builders::delete::DeleteBuilder;
 use super::builders::select::SelectBuilder;
 
 
@@ -39,6 +40,14 @@ impl<T: BuildsQueries> QueryBuilder<T> {
 
     pub fn select(&self, select_obj: &SelectBuilder) -> String{
         self._builder.select(select_obj)
+    }
+
+    pub fn delete_raw(&self, table: &str, where_clause: Option<&str>) -> String {
+        self._builder.delete_raw(table, where_clause)
+    }
+
+    pub fn delete(&self, select_obj: &DeleteBuilder) -> String{
+        self._builder.delete(select_obj)
     }
 
 

@@ -1,6 +1,6 @@
 use mysql::Row;
 
-use crate::lockers::builders::select::SelectBuilder;
+use crate::lockers::builders::{delete::DeleteBuilder, select::SelectBuilder};
 
 
 pub trait BuildsQueries {
@@ -9,6 +9,8 @@ pub trait BuildsQueries {
     fn insert<T: QueryData>(&self, table: &str, data: &[T])  -> String;
     fn select_raw(&self, table: &str, cols: &str, where_clause: Option<&str>, order_by: Option<&str>, limit: Option<&str>) -> String;
     fn select(&self, select_obj: &SelectBuilder) -> String;
+    fn delete_raw(&self, table: &str, where_clause: Option<&str>) -> String;
+    fn delete(&self, select_obj: &DeleteBuilder) -> String;
 }
 
 pub trait QueryData {

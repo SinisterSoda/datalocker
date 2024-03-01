@@ -1,7 +1,7 @@
 
 use crate::common::traits::{BuildsQueries, QueryData};
 
-use super::select::SelectBuilder;
+use super::{delete::DeleteBuilder, select::SelectBuilder};
 
 
 
@@ -74,7 +74,7 @@ impl BuildsQueries for MySqlBuilder {
         let mut q = format!("SELECT {} FROM {}", cols, table);
         match where_clause {
             Some(wc) => {
-                q = q + " " + wc;
+                q = q + " WHERE " + wc;
             }
             None => {
                 
@@ -99,6 +99,23 @@ impl BuildsQueries for MySqlBuilder {
             }
         }
 
+
+        q
+    }
+    fn delete(&self, select_obj: &DeleteBuilder) -> String{
+        select_obj.build()
+    }
+
+    fn delete_raw(&self, table: &str, where_clause: Option<&str>) -> String {
+        let mut q = format!("DELETE FROM {}", table);
+        match where_clause {
+            Some(wc) => {
+                q = q + " WHERE " + wc;
+            }
+            None => {
+                
+            }
+        }
 
         q
     }
