@@ -3,30 +3,15 @@ pub mod common;
 pub extern crate mysql;
 
 use common::traits::{FromLockerRow, QueryData};
-use lockers::mysql_locker::MysqlConnection;
+
 use mysql::from_row;
 
 
 
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
-pub fn connect() -> MysqlConnection {
-    let conn: MysqlConnection = MysqlConnection::new(
-        "root".to_string(), 
-        "rootroot".to_string(), 
-        "localhost".to_string(), 
-        3306, 
-        "rust_example".to_string()
-    );
-
-    conn
-    
-
-}
 
 
-pub struct TestDataStruct {
+
+struct TestDataStruct {
     id: Option<u32>,
     name: String,
     address: String,
@@ -80,9 +65,24 @@ mod tests {
 
     use std::error::Error;
 
-    use crate::lockers::builders::select::SelectBuilder;
+    use crate::lockers::builders::{delete::DeleteBuilder, select::SelectBuilder};
+    use lockers::mysql_locker::MysqlConnection;
 
     use super::*;
+
+    fn connect() -> MysqlConnection {
+        let conn: MysqlConnection = MysqlConnection::new(
+            "root".to_string(), 
+            "rootroot".to_string(), 
+            "localhost".to_string(), 
+            3306, 
+            "rust_example".to_string()
+        );
+    
+        conn
+        
+    
+    }
 
     #[test]
     fn it_works() {
@@ -115,7 +115,7 @@ mod tests {
 
         assert_eq!(r4.is_ok(), true);
 
-        let r5 = conn.select_raw("testTable", "*", None, None, None);
+        let r5 = conn.select_raw("testTable", "*", Some("1=1"), None, None);
         //println!("{}", r5);
         assert_eq!(r5.is_ok(), true);
         let rows: Vec<mysql::Row> = r5.unwrap();
@@ -160,6 +160,15 @@ mod tests {
             
             println!("{} {}", name, address);
         }
+
+        let deletor = DeleteBuilder::new("testTable")
+            .add_where("id = 1");
+
+        let r9 = conn.delete(&deletor);
+        assert_eq!(r9.is_ok(), true);
+        let r10 = conn.delete_raw("testTable", Some("id=2"));
+        assert_eq!(r10.is_ok(), true);
+
 
         let r8 = conn.select_raw("testTable", "*", None, None, None);
         //println!("{}", r5);

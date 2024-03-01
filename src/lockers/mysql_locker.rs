@@ -6,6 +6,7 @@ use crate::lockers::builders::mysql::MySqlBuilder;
 use mysql::*;
 use mysql::prelude::*;
 
+use super::builders::delete::DeleteBuilder;
 use super::builders::select::SelectBuilder;
 use super::query_builder::QueryBuilder;
 
@@ -131,7 +132,6 @@ impl MysqlConnection {
     pub fn select_raw(&mut self, table: &str, cols: &str, where_clause: Option<&str>,  order_by: Option<&str>, limit: Option<&str>) -> std::result::Result<Vec<mysql::Row>, Box<dyn std::error::Error>> {
         let q = self.builder.select_raw(table, cols, where_clause, order_by, limit);
 
-
         let rows: std::result::Result<Vec<mysql::Row>, Box<dyn std::error::Error>>= self.exec(&q);
         Ok(rows.unwrap())
     }
@@ -140,6 +140,18 @@ impl MysqlConnection {
         let q = self.builder.select(select_obj);
         let rows: std::result::Result<Vec<mysql::Row>, Box<dyn std::error::Error>>= self.exec(&q);
         Ok(rows.unwrap())
+    }
+
+    pub fn delete_raw(&mut self, table: &str, where_clause: Option<&str>) -> std::result::Result<(), Box<dyn std::error::Error>> {
+        let q = self.builder.delete_raw(table, where_clause);
+
+        self.query(&q)
+    }
+
+    pub fn delete(&mut self, select_obj: &DeleteBuilder) -> std::result::Result<(), Box<dyn std::error::Error>> {
+        let q = self.builder.delete(select_obj);
+        
+        self.query(&q)
     }
 
     
