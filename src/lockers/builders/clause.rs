@@ -74,6 +74,10 @@ impl BuildsClauses for SelectBuilder {
 
 
     }
+    
+    fn get_table(&self) -> String {
+        self.table.clone()
+    }
 }
 
 impl SelectBuilder {
@@ -117,7 +121,9 @@ pub struct ClauseBuilder {
 }
 
 impl BuildsClauses for ClauseBuilder {
-    
+    fn get_table(&self) -> String {
+        self.table.clone()
+    }
 
     fn add_where(self, clause: &str) -> Self {
         let mut s = self;

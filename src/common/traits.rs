@@ -10,6 +10,8 @@ pub trait BuildsQueries {
     fn select<T: BuildsClauses>(&self, select_obj: &T) -> String;
     fn delete_raw(&self, table: &str, where_clause: Option<&str>) -> String;
     fn delete<T: BuildsClauses>(&self, select_obj: &T) -> String;
+    fn update_raw(&self, table: &str, where_clause: Option<&str>, field_updates: &[(&str, &str)], ) -> String;
+    fn update<T: BuildsClauses>(&self, clause_obj: &T, field_updates: &[(&str, &str)]) -> String;
 }
 
 pub trait QueryData {
@@ -30,4 +32,5 @@ pub trait BuildsClauses {
     fn and(self) -> Self;
     fn or(self) -> Self;
     fn build(&self) -> String;
+    fn get_table(&self) -> String;
 }

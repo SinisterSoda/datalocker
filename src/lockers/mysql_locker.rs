@@ -1,7 +1,7 @@
 
 
 use crate::common::enums::{MysqlAuthType, DB};
-use crate::common::traits::QueryData;
+use crate::common::traits::{BuildsClauses, QueryData};
 use crate::lockers::builders::mysql::MySqlBuilder;
 use mysql::*;
 use mysql::prelude::*;
@@ -150,6 +150,22 @@ impl MysqlConnection {
     pub fn delete(&mut self, select_obj: &ClauseBuilder) -> std::result::Result<(), Box<dyn std::error::Error>> {
         let q = self.builder.delete(select_obj);
         
+        self.query(&q)
+    }
+
+    pub fn update_raw(&mut self, table: &str, where_clause: Option<&str>, fields: &[(&str, &str)]) -> std::result::Result<(), Box<dyn std::error::Error>> {
+        let q = self.builder.update_raw(table, where_clause, fields);
+        println!("{}", q);
+
+
+        self.query(&q)
+    }
+    
+    pub fn update<U: BuildsClauses>(&mut self, clause_obj: &U, field_updates: &[(&str, &str)]) -> std::result::Result<(), Box<dyn std::error::Error>> {
+        let q = self.builder.update(clause_obj, field_updates);
+        println!("{}", q);
+
+
         self.query(&q)
     }
 
