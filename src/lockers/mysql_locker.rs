@@ -155,16 +155,12 @@ impl MysqlConnection {
 
     pub fn update_raw(&mut self, table: &str, where_clause: Option<&str>, fields: &[(&str, &str)]) -> std::result::Result<(), Box<dyn std::error::Error>> {
         let q = self.builder.update_raw(table, where_clause, fields);
-        println!("{}", q);
-
 
         self.query(&q)
     }
     
     pub fn update<U: BuildsClauses>(&mut self, clause_obj: &U, field_updates: &[(&str, &str)]) -> std::result::Result<(), Box<dyn std::error::Error>> {
         let q = self.builder.update(clause_obj, field_updates);
-        println!("{}", q);
-
 
         self.query(&q)
     }

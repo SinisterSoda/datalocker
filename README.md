@@ -3,9 +3,11 @@ Basic Database Interface. Currently works with mySQL only. Uses the mysql crate 
 ```rust
 use std::error::Error;
 
+use datalocker::common::enums::ClauseType;
+use datalocker::common::traits::BuildsClauses;
 use datalocker::common::traits::QueryData;
 use datalocker::common::traits::FromLockerRow;
-use datalocker::lockers::builders::select::SelectBuilder;
+use datalocker::lockers::builders::clause::{SelectBuilder, ClauseBuilder};
 use datalocker::lockers::mysql_locker::MysqlConnection;
 use datalocker::mysql;
 use datalocker::query_primary_key;
@@ -158,6 +160,19 @@ fn main() {
         println!("{} {}", name, address);
     }
 
+    //ClauseBuilder is similar to SelectBuilder, but more general
+    //we can use this to create where clauses for deletes (and updates) 
+    //in the same way as above
+    let deletor = ClauseBuilder::new("testTable", ClauseType::Delete)
+        .add_where("id = 1");
+
+    //simply pass the clausebuilder into the delete function
+    let r9 = conn.delete(&deletor);
+
+    //or use the delete_raw function directly
+    let r10 = conn.delete_raw("testTable", Some("id=2"));
+
+
     
     let r8 = conn.select_raw("testTable", "*", None, None, None);
     let rows4: Vec<mysql::Row> = r8.unwrap();
@@ -168,5 +183,33 @@ fn main() {
         let tds = TestDataStruct::from_row(row);
         println!("{}", tds.to_string());
     }
+
+    //use the update raw function to perform updates
+    //pass in the table name, a where clause option, and an 
+    //array of update tuples with the field name and new value 
+    let r11 = conn.update_raw("testTable", Some("id = 3"), &[
+        ("Name", "'George'"),
+        ("Address", "'815 Atkins Street'")
+    ]);
+
+    //can also use the ClauseBuilder clause when using  more complex where clauses
+    //make sure toset the correct ClauseType
+    let claus = ClauseBuilder::new("testTable", ClauseType::Update)
+        .add_where("Name = 'Connor'")
+        .or()
+        .add_where("Name = 'Franz'");
+
+    let r12 = conn.update(&claus, &[("age", "11")]);
+
+    //lets select everything again and confirm our results work
+    let r8 = conn.select_raw("testTable", "*", None, None, None);
+
+    let rows4: Vec<mysql::Row> = r8.unwrap();
+
+    for row in rows4 {
+        let tds = TestDataStruct::from_row(row);
+        println!("{}", tds.to_string());
+    }
 }
+
 ```
