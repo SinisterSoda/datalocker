@@ -1,6 +1,5 @@
 use mysql::Row;
 
-use crate::lockers::builders::{delete::DeleteBuilder, select::SelectBuilder};
 
 
 pub trait BuildsQueries {
@@ -8,9 +7,11 @@ pub trait BuildsQueries {
     fn create(&self, table: &str, fields: &[(&str, &str)]) -> String;
     fn insert<T: QueryData>(&self, table: &str, data: &[T])  -> String;
     fn select_raw(&self, table: &str, cols: &str, where_clause: Option<&str>, order_by: Option<&str>, limit: Option<&str>) -> String;
-    fn select(&self, select_obj: &SelectBuilder) -> String;
+    fn select<T: BuildsClauses>(&self, select_obj: &T) -> String;
     fn delete_raw(&self, table: &str, where_clause: Option<&str>) -> String;
-    fn delete(&self, select_obj: &DeleteBuilder) -> String;
+    fn delete<T: BuildsClauses>(&self, select_obj: &T) -> String;
+    fn update_raw(&self, table: &str, where_clause: Option<&str>, field_updates: &[(&str, &str)], ) -> String;
+    fn update<T: BuildsClauses>(&self, clause_obj: &T, field_updates: &[(&str, &str)]) -> String;
 }
 
 pub trait QueryData {
@@ -23,4 +24,13 @@ pub trait QueryData {
 
 pub trait FromLockerRow {
     fn from_row(row: Row) -> Self;
+}
+
+pub trait BuildsClauses {
+    fn add_where(self, clause: &str) -> Self;
+    fn add_where_subquery<T: BuildsClauses>(self, clause: &str, sb: T) -> Self;
+    fn and(self) -> Self;
+    fn or(self) -> Self;
+    fn build(&self) -> String;
+    fn get_table(&self) -> String;
 }

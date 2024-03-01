@@ -65,7 +65,7 @@ mod tests {
 
     use std::error::Error;
 
-    use crate::lockers::builders::{delete::DeleteBuilder, select::SelectBuilder};
+    use crate::{common::{enums::ClauseType, traits::BuildsClauses}, lockers::builders::clause::{ClauseBuilder, SelectBuilder}};
     use lockers::mysql_locker::MysqlConnection;
 
     use super::*;
@@ -108,7 +108,9 @@ mod tests {
         let data = [
             TestDataStruct{ name: String::from("Michael"), address: String::from("158 Crystal Avenue"), age: 25, ..Default::default() },
             TestDataStruct{ name: String::from("John"), address: String::from("742 St. Lawrence Avenue"), age: 28, ..Default::default() },
-            TestDataStruct{ name: String::from("William"), address: String::from("415 Atkins Street"), age: 55, ..Default::default() }
+            TestDataStruct{ name: String::from("William"), address: String::from("415 Atkins Street"), age: 55, ..Default::default() },
+            TestDataStruct{ name: String::from("Connor"), address: String::from("84 Brecker Street"), age: 16, ..Default::default() },
+            TestDataStruct{ name: String::from("Franz"), address: String::from("481 High Street"), age: 28, ..Default::default() }
         ];
 
         let r4 = conn.insert("testTable", &data);
@@ -161,7 +163,7 @@ mod tests {
             println!("{} {}", name, address);
         }
 
-        let deletor = DeleteBuilder::new("testTable")
+        let deletor = ClauseBuilder::new("testTable", ClauseType::Delete)
             .add_where("id = 1");
 
         let r9 = conn.delete(&deletor);
@@ -180,6 +182,31 @@ mod tests {
             let tds = TestDataStruct::from_row(row);
             println!("{}", tds.to_string());
         }
+
+        let r11 = conn.update_raw("testTable", Some("id = 3"), &[
+            ("Name", "'George'"),
+            ("Address", "'815 Atkins Street'")
+        ]);
+        assert_eq!(r11.is_ok(), true);
+
+        let claus = ClauseBuilder::new("testTable", ClauseType::Update)
+            .add_where("Name = 'Connor'")
+            .or()
+            .add_where("Name = 'Franz'");
+
+        let r12 = conn.update(&claus, &[("age", "11")]);
+        assert_eq!(r12.is_ok(), true);
+
+        let r8 = conn.select_raw("testTable", "*", None, None, None);
+        assert_eq!(r8.is_ok(), true);
+        let rows4: Vec<mysql::Row> = r8.unwrap();
+
+        for row in rows4 {
+            let tds = TestDataStruct::from_row(row);
+            println!("{}", tds.to_string());
+        }
+
+        
 
     }
 }

@@ -1,14 +1,11 @@
 
-use crate::common::traits::{BuildsQueries, QueryData};
+use crate::common::traits::{BuildsClauses, BuildsQueries, QueryData};
 
-use super::{delete::DeleteBuilder, select::SelectBuilder};
 
 
 
 pub struct MySqlBuilder {
-    _macro_list_create: &'static[(&'static str, &'static str)],
-    _macro_list_select: &'static[(&'static str, &'static str)],
-    _macro_list_insert: &'static[(&'static str, &'static str)]
+
 }
 
 impl BuildsQueries for MySqlBuilder {
@@ -34,15 +31,7 @@ impl BuildsQueries for MySqlBuilder {
 
     fn new() -> Self {
         Self {
-            _macro_list_create: &[
-                ("<primary id>", "int not null PRIMARY KEY AUTO_INCREMENT")
-            ],
-            _macro_list_select: &[
-                
-            ],
-            _macro_list_insert: &[
 
-            ]
         }
     }
 
@@ -66,7 +55,7 @@ impl BuildsQueries for MySqlBuilder {
         q
     }
 
-    fn select(&self, select_obj: &SelectBuilder) -> String{
+    fn select<T: BuildsClauses>(&self, select_obj: &T) -> String{
         select_obj.build()
     }
 
@@ -102,7 +91,7 @@ impl BuildsQueries for MySqlBuilder {
 
         q
     }
-    fn delete(&self, select_obj: &DeleteBuilder) -> String{
+    fn delete<T: BuildsClauses>(&self, select_obj: &T) -> String{
         select_obj.build()
     }
 
@@ -117,6 +106,51 @@ impl BuildsQueries for MySqlBuilder {
             }
         }
 
+        q
+    }
+    
+    fn update_raw(&self, table: &str, where_clause: Option<&str>, fields: &[(&str, &str)]) -> String {
+        let mut sets = String::from("SET ");
+
+        let mut it = fields.iter().peekable();
+
+        while let Some(field) = it.next() {
+            let sq = format!("{} = {}", field.0, field.1);
+            sets += &sq;
+            if !it.peek().is_none() {
+                sets += &", ";
+            }
+        }
+
+        let mut wheres = String::from("");
+        match where_clause {
+            None => {
+
+            },
+            Some(w) => {
+                wheres = format!(" WHERE {}", w);
+            }
+        };
+        
+        let q = format!("UPDATE {} {}{}", table, sets, wheres);
+
+        q
+    }
+    
+    fn update<T: BuildsClauses>(&self, clause_obj: &T, field_updates: &[(&str, &str)]) -> String {
+        let mut sets = String::from("SET ");
+
+        let mut it = field_updates.iter().peekable();
+
+        while let Some(field) = it.next() {
+            let sq = format!("{} = {}", field.0, field.1);
+            sets += &sq;
+            if !it.peek().is_none() {
+                sets += &", ";
+            }
+        }
+
+        let q = format!("UPDATE {} {} {}", clause_obj.get_table(), sets, clause_obj.build());
         q
     }
 
